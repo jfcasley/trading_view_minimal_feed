@@ -4,15 +4,6 @@ from twisted.web.server import Site
 from twisted.web.resource import Resource
 from twisted.internet import reactor
 import json
-from calendar import calendar
-
-class YearPage(Resource):
-    def __init__(self, year):
-        Resource.__init__(self)
-        self.year = year
-
-    def render_GET(self, request):
-        return "<html><body><pre>%s</pre></body></html>" % (calendar(self.year),)
 
 class Router(Resource):
     def __init__(self, name):
@@ -21,7 +12,6 @@ class Router(Resource):
         
     def render_GET(self, request):
         print request.uri
-        print "name: %s" % self.name
         request.setHeader("content-type", "text/plain")
         request.setHeader("Access-Control-Allow-Origin", "*")
 
@@ -64,6 +54,7 @@ class Router(Resource):
                         }
             string = json.dumps(response)
             return string
+            
 class DataFeed(Resource):
     def getChild(self, name, request):
         return Router(name)
@@ -72,5 +63,3 @@ root = DataFeed()
 factory = Site(root)
 reactor.listenTCP(8080, factory)
 reactor.run()
-
-
